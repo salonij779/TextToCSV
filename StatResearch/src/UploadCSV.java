@@ -1,20 +1,21 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
+
 
 public class UploadCSV {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         System.out.println("**********************************Welcome*********************************");
         System.out.println("Text to CSV conversion");
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter the file path: ");
+        System.out.println("Enter the text file path: ");
         String path = scanner.nextLine();
+        //String path = "C:\\Users\\salon\\Downloads\\c1.txt";
         Path new_path = Paths.get(path);
         System.out.println("File path: "+new_path.toString());
-
-        System.out.println("Enter the output file name: ");
+        System.out.println("Enter the output file name (do not add .csv to the name of the output file): ");
         String output_filename = scanner.nextLine();
         if(!(new File("./"+output_filename+".csv").exists())) {
             Read read = new Read(new_path.toString());
@@ -65,6 +66,7 @@ class Print {
     public void addRow(String[] c) throws IOException {
         int l = c.length;
         for (int i = 0; i < l; i++) {
+
             this.writer.append(c[i]);
             if (i != (l - 1)) {
                 this.writer.append(",");
@@ -78,7 +80,7 @@ class Read {
 
     protected String fileName;
 
-    protected BufferedReader bufferedReader;
+    protected Scanner bufferedReader;
 
     protected Print print;
 
@@ -102,31 +104,24 @@ class Read {
     public void exec(Integer type) {
         String sCurrentLine = "";
         try {
-            this.bufferedReader = new BufferedReader(
-                    new FileReader(this.fileName));
+            this.bufferedReader = new Scanner(new File(this.fileName), StandardCharsets.UTF_8.name());
+            while (this.bufferedReader.hasNextLine()){
+                sCurrentLine = this.bufferedReader.nextLine();
+                String[] column = sCurrentLine.split("\\s+");
+                //String columns = sCurrentLine;
+                //int length = columns.length();
+                int col_length = column.length;
 
-            while ((sCurrentLine = this.bufferedReader.readLine()) != null) {
-                String[] columns = sCurrentLine.split("\\s+");
-                int length = columns.length;
-                if(length > 7){
-                    columns= sCurrentLine.split(":");
-                }
                 if (type == 1) {
-                    this.print.addRow(columns);
+                    System.out.println("No. of cell in c1:"+col_length);
+                    System.out.println("Length of the data in c1:"+column[0].length());
+                    this.print.addRow(column);
                 }
             }
             this.print.close();
 
         } catch (IOException ex) {
             ex.printStackTrace();
-        } finally {
-            try {
-                if (this.bufferedReader != null) {
-                    this.bufferedReader.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
         }
     }
 }
