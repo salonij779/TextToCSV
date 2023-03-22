@@ -1,6 +1,4 @@
 # TextToCSV
-Statistical Research for SRAM Challenge Demo Files
-
 This program is used to convert .txt file to .csv file.
 
 It takes two inputs namely:
